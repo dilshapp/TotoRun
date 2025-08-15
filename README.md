@@ -53,7 +53,9 @@ https://dilshapp.github.io/TotoRun/
 Project Documentation
 
 # Screenshots
-
+- Starting page
+  ![image](https://github.com/dilshapp/TotoRun/blob/main/IMG-20250815-WA0004.jpg)
+  
 
 # Diagrams
 ![Workflow](Add diagram here)
