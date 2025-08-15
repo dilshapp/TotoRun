@@ -54,14 +54,6 @@ Project Documentation
 
 # Screenshots
 
-![Screenshot1](Add screenshot here)
-Main race customization screen with tortoise name, age, shell size, and terrain selection.
-
-![Screenshot2](Add screenshot here)
-Terrain selection panel – choose from smooth grass to lava fields.
-
-![Screenshot3](Add screenshot here)
-Age & shell sliders with humorous captions for each option.
 
 # Diagrams
 ![Workflow](Add diagram here)
