@@ -74,7 +74,7 @@ Project Documentation
 Project Demo
 
 # Video
-![video]()
+![video](https://github.com/dilshapp/TotoRun/blob/main/Recording%202025-08-15%20204758%20(1)%20(1)%20(1).mp4)
 Demonstrates customizing the tortoise and initiating the race scenario.
 
 Team Contributions
