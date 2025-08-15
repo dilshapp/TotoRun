@@ -67,17 +67,14 @@ Project Documentation
   ![image](https://github.com/dilshapp/TotoRun/blob/main/IMG-20250815-WA0004.jpg)
 
 
+- Result Page
+ ![image](https://github.com/dilshapp/TotoRun/blob/main/Screenshot%202025-08-15%20080211.png)  
   
-  
-
-# Diagrams
-![Workflow](Add diagram here)
-User selects race parameters → Input processed → Output teases race result → User retries for legendary combo.
 
 Project Demo
 
 # Video
-[Add demo link here]
+![video]()
 Demonstrates customizing the tortoise and initiating the race scenario.
 
 Team Contributions
