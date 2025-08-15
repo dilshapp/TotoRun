@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TotoRace - VS Screen</title>
+    <style>
+        /* 
+        CUSTOMIZATION GUIDE:
+        - Replace images/tortoise.png and images/rabbit.png with your assets
+        - Change --neon-blue and --neon-red for different color schemes
+        - Modify character names and taglines in HTML
+        */
+        
+        :root {
+            --neon-blue: #00d4ff;
+            --neon-red: #ff0080;
+            --dark-bg: #0a0a0a;
+            --spark-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Particles Background */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        .particle.blue {
+            background: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .particle.red {
+            background: var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .vs-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Character Sides */
+        .character-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .character-side.left {
+            background: linear-gradient(45deg, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .character-side.right {
+            background: linear-gradient(-45deg, rgba(255, 0, 128, 0.1) 0%, transparent 70%);
+        }
+
+        /* Character Cards */
+        .character-card {
+            position: relative;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .character-card:hover {
+            transform: scale(1.05);
+        }
+
+        .character-frame {
+            width: 300px;
+            height: 400px;
+            position: relative;
+            margin-bottom: 2rem;
+            transform: skew(-5deg);
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .character-frame.left {
+            border: 3px solid var(--neon-blue);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .character-frame.right {
+            border: 3px solid var(--neon-red);
+            box-shadow: 0 0 30px rgba(255, 0, 128, 0.5);
+            transform: skew(5deg);
+        }
+
+        .character-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .character-card:hover .character-image {
+            transform: scale(1.1);
+        }
+
+        .character-name {
+            font-size: 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .character-name.left {
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        .character-name.right {
+            color: var(--neon-red);
+            text-shadow: 0 0 20px var(--neon-red);
+        }
+
+        .character-tagline {
+            font-size: 1rem;
+            color: #cccccc;
+            font-style: italic;
+        }
+
+        /* VS Animation */
+        .vs-section {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .vs-text {
+            font-size: 8rem;
+            font-weight: 900;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vs-letter {
+            display: inline-block;
+            background: linear-gradient(45deg, #FFD700, #FFFFFF, #FFD700, #FF6B35, #FFFFFF);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow:
+                0 0 40px rgba(255, 255, 255, 1),
+                0 0 80px rgba(255, 215, 0, 0.8),
+                0 0 120px rgba(255, 107, 53, 0.6);
+            filter:
+                drop-shadow(0 8px 20px rgba(0, 0, 0, 0.8))
+                drop-shadow(0 0 30px rgba(255, 255, 255, 0.9));
+            font-weight: 900;
+            animation: thunderGlow 2s ease-in-out infinite alternate;
+        }
+
+        /* Thunder-like VS text after countdown */
+        .vs-thunder {
+            background: linear-gradient(45deg, #FFD700, #FFFFFF, #FFD700, #FF6B35, #FFFFFF) !important;
+            background-size: 300% 300% !important;
+            animation: thunderGlow 0.5s ease-in-out infinite alternate, thunderShake 0.1s ease-in-out infinite !important;
+            text-shadow:
+                0 0 20px rgba(255, 215, 0, 1),
+                0 0 40px rgba(255, 255, 255, 1),
+                0 0 60px rgba(255, 107, 53, 0.8),
+                0 0 80px rgba(255, 215, 0, 0.6) !important;
+            filter:
+                drop-shadow(0 0 15px rgba(255, 215, 0, 0.8))
+                drop-shadow(0 0 25px rgba(255, 255, 255, 0.6))
+                drop-shadow(0 5px 15px rgba(0, 0, 0, 0.8)) !important;
+            font-weight: 900 !important;
+            transform: scale(1.1) !important;
+        }
+
+        .v-left {
+            animation: slideInFromLeft 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            transform: translateX(-100vw);
+            opacity: 0;
+        }
+
+        .s-left {
+            animation: slideInFromRight 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            animation-delay: 0.2s;
+            transform: translateX(100vw);
+            opacity: 0;
+        }
+
+        @keyframes slideInFromLeft {
+            0% {
+                transform: translateX(-100vw);
+                opacity: 0;
+            }
+            70% {
+                transform: translateX(10px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInFromRight {
+            0% {
+                transform: translateX(100vw);
+                opacity: 0;
+            }
+            70% {
+                transform: translateX(-10px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .vs-complete {
+            animation: vsPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes vsPulse {
+            0% {
+                filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            }
+            100% {
+                filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.8));
+                text-shadow: 0 0 50px rgba(255, 255, 255, 1);
+            }
+        }
+
+        /* Spark Burst */
+        .spark-burst {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .spark {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--spark-color);
+            border-radius: 50%;
+            animation: sparkBurst 0.8s ease-out forwards;
+        }
+
+        @keyframes sparkBurst {
+            0% {
+                transform: scale(0) translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) translate(var(--spark-x), var(--spark-y));
+                opacity: 0;
+            }
+        }
+
+        /* Camera Shake */
+        .shake {
+            animation: cameraShake 0.5s ease-in-out;
+        }
+
+        @keyframes cameraShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Countdown */
+        .countdown {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 6rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            z-index: 15;
+            opacity: 0;
+        }
+
+        .countdown.show {
+            animation: countdownPulse 1s ease-in-out;
+        }
+
+        @keyframes countdownPulse {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
+        /* HERE WE GO message styling */
+        .here-we-go-message {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            animation: hereWeGoEntrance 1s ease-in-out forwards;
+        }
+
+        .racing-flag-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .racing-flag {
+            font-size: 3rem;
+            animation: flagWave 0.5s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+        }
+
+        .here-we-go-text {
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow:
+                0 0 20px rgba(255, 255, 255, 1),
+                0 0 40px rgba(255, 215, 0, 0.8),
+                0 0 60px rgba(255, 107, 53, 0.6);
+            animation: textPulse 0.8s ease-in-out infinite alternate;
+            margin: 0;
+        }
+
+        @keyframes hereWeGoEntrance {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+        }
+
+        @keyframes flagWave {
+            0% { transform: rotate(-5deg) scale(1); }
+            100% { transform: rotate(5deg) scale(1.1); }
+        }
+
+        @keyframes textPulse {
+            0% {
+                text-shadow:
+                    0 0 20px rgba(255, 255, 255, 1),
+                    0 0 40px rgba(255, 215, 0, 0.8),
+                    0 0 60px rgba(255, 107, 53, 0.6);
+            }
+            100% {
+                text-shadow:
+                    0 0 30px rgba(255, 255, 255, 1),
+                    0 0 60px rgba(255, 215, 0, 1),
+                    0 0 90px rgba(255, 107, 53, 0.8);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .vs-container {
+                flex-direction: column;
+            }
+            
+            .character-frame {
+                width: 200px;
+                height: 250px;
+            }
+            
+            .vs-text {
+                font-size: 4rem;
+            }
+            
+            .character-name {
+                font-size: 1.5rem;
+            }
+            
+            .countdown {
+                font-size: 4rem;
+            }
+        }
+
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            .vs-letter {
+                animation: none !important;
+                opacity: 1;
+                transform: translateX(0);
+            }
+            
+            .particle {
+                animation: none;
+            }
+            
+            .shake {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Main VS Container -->
+    <div class="vs-container" id="vsContainer">
+        <!-- Left Side - Tortoise -->
+        <div class="character-side left">
+            <div class="character-card">
+                <div class="character-frame left">
+                    <img src="images/tortoise.png" alt="Tortoise" class="character-image" 
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDA0NDAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZmlsbD0iIzAwZDRmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPvCfkKI8L3RleHQ+PC9zdmc+'">
+                </div>
+                <h2 class="character-name left">TORTOISE</h2>
+                <p class="character-tagline">Slow & Steady Champion</p>
+            </div>
+        </div>
+
+        <!-- Right Side - Rabbit -->
+        <div class="character-side right">
+            <div class="character-card">
+                <div class="character-frame right">
+                    <img src="images/rabbit.png" alt="Rabbit" class="character-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNDQwMDAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZmlsbD0iI2ZmMDA4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPvCfkLA8L3RleHQ+PC9zdmc+'">
+                </div>
+                <h2 class="character-name right">RABBIT</h2>
+                <p class="character-tagline">Lightning Speed Demon</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- VS Animation Section -->
+    <div class="vs-section">
+        <div class="vs-text">
+            <span class="vs-letter v-left" id="vLeft">V</span>
+            <span class="vs-letter s-left" id="sLeft">S</span>
+        </div>
+        <div class="spark-burst" id="sparkBurst"></div>
+    </div>
+
+    <!-- Countdown -->
+    <div class="countdown" id="countdown">3</div>
+
+    <!-- HERE WE GO message with racing flag -->
+    <div class="here-we-go-message" id="hereWeGoMessage" style="display: none;">
+        <div class="racing-flag-container">
+            <div class="racing-flag">🏁</div>
+            <h2 class="here-we-go-text">HERE WE GO!</h2>
+            <div class="racing-flag">🏁</div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = `particle ${i % 2 === 0 ? 'blue' : 'red'}`;
+                particle.style.left = (i % 2 === 0 ? Math.random() * 50 : 50 + Math.random() * 50) + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Create spark burst effect
+        function createSparkBurst() {
+            const sparkBurst = document.getElementById('sparkBurst');
+            
+            for (let i = 0; i < 12; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                
+                const angle = (i / 12) * 2 * Math.PI;
+                const distance = 100 + Math.random() * 50;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                spark.style.setProperty('--spark-x', x + 'px');
+                spark.style.setProperty('--spark-y', y + 'px');
+                spark.style.animationDelay = Math.random() * 0.2 + 's';
+                
+                sparkBurst.appendChild(spark);
+            }
+        }
+
+        // Countdown animation with HERE WE GO
+        function startCountdown() {
+            const countdown = document.getElementById('countdown');
+            const hereWeGoMessage = document.getElementById('hereWeGoMessage');
+            const vsText = document.querySelector('.vs-text');
+            let count = 3;
+
+            const countdownInterval = setInterval(() => {
+                countdown.textContent = count;
+                countdown.classList.add('show');
+
+                setTimeout(() => {
+                    countdown.classList.remove('show');
+                }, 800);
+
+                count--;
+
+                if (count < 0) {
+                    clearInterval(countdownInterval);
+                    countdown.style.display = 'none';
+
+                    // Apply thunder effect to VS text
+                    const vsLetters = document.querySelectorAll('.vs-letter');
+                    vsLetters.forEach(letter => {
+                        letter.classList.add('vs-thunder');
+                    });
+
+                    // Show HERE WE GO message and redirect to race
+                    hereWeGoMessage.style.display = 'block';
+                    setTimeout(() => {
+                        startRace();
+                    }, 2000); // Slightly longer to see the effect
+                }
+            }, 1000);
+        }
+
+        // Start race function
+        function startRace() {
+            window.location.href = 'race.html';
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+
+            // Start VS animation immediately
+            const vLeft = document.getElementById('vLeft');
+            const sLeft = document.getElementById('sLeft');
+
+            // Ensure animations start
+            vLeft.style.animation = 'slideInFromLeft 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
+            sLeft.style.animation = 'slideInFromRight 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s forwards';
+
+            // Trigger VS animation completion effects
+            setTimeout(() => {
+                createSparkBurst();
+                document.getElementById('vsContainer').classList.add('shake');
+                document.querySelector('.vs-text').classList.add('vs-complete');
+
+                // Start countdown after VS animation
+                setTimeout(() => {
+                    startCountdown();
+                }, 500);
+            }, 2200); // Adjusted timing for longer animation
+        });
+    </script>
+</body>
+</html>

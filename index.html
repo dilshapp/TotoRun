@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Great Race - Tortoise vs Rabbit</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="hero-section">
+        <button id="soundToggle" class="sound-toggle" onclick="toggleSound()" title="Toggle Sound">🔊</button>
+        <h1 class="main-title">🐰 CAN YOU BEAT THE UNBEATABLE RABBIT? 🐢</h1>
+        <p class="hero-subtitle">This rabbit has NEVER lost a race... until now? �</p>
+    </div>
+
+    <div class="container">
+        <div class="story-intro">
+            <p class="story-text">
+                🎭 <strong>Breaking News: Local Rabbit Still Thinks He's Hot Stuff!</strong><br>
+                This overconfident bunny has been bragging about his speed for YEARS. But rumor has it,
+                there's a <em>magical combination</em> that turns any tortoise into a speed demon!
+                Time to humble this furry show-off! 🤣
+            </p>
+        </div>
+
+        <div class="characters-showcase">
+            <div class="character-card rabbit-card">
+                <div class="character-emoji">🐰</div>
+                <h3>Mr. Show-Off Rabbit</h3>
+                <div class="character-stats">
+                    <span class="stat">⚡ Speed: "Faster than WiFi"</span>
+                    <span class="stat">🧠 Brain Cells: 3 (maybe 4)</span>
+                    <span class="stat">🏆 Ego: Bigger than Texas</span>
+                </div>
+                <p class="character-desc">"I'm so fast, I finish races before they start! 😎"</p>
+            </div>
+
+            <div class="vs-divider">
+                <div class="vs-text">VS</div>
+                <div class="lightning">⚡</div>
+            </div>
+
+            <div class="character-card tortoise-card">
+                <div class="character-emoji">🐢</div>
+                <h3>Sneaky McTortoise</h3>
+                <div class="character-stats">
+                    <span class="stat">🐌 Speed: "Surprisingly Sneaky"</span>
+                    <span class="stat">🎯 Strategy: "Fake it till you make it"</span>
+                    <span class="stat">🔮 Secret Power: Plot Armor</span>
+                </div>
+                <p class="character-desc">"Don't underestimate the power of shell! 🐚✨"</p>
+            </div>
+        </div>
+
+        <div class="challenge-section">
+            <h2 class="challenge-title">🎨 PIMP MY TORTOISE</h2>
+            <p class="challenge-desc">Time to turn your slow-poke into a speed demon! (Results may vary... a lot) 😅</p>
+        </div>
+
+        <form id="raceForm" class="tortoise-lab">
+            <div class="lab-container">
+                <div class="lab-header">
+                    <span class="lab-icon">�</span>
+                    <h3>TotoRace Championship Setup</h3>
+                    <span class="lab-icon">🏆</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="lab-label">🏷️ Tortoise Name:</label>
+                    <input type="text" id="name" placeholder="Name your future speed legend..." required class="lab-input">
+                </div>
+
+                <div class="attributes-grid">
+                    <div class="attribute-card">
+                        <div class="attribute-icon">🎂</div>
+                        <label class="attribute-label">Age of Tortoise</label>
+                        <select id="weight" required class="attribute-select">
+                            <option value="">Select age...</option>
+                            <option value="heavy">1 year (Too Young - Still Learning)</option>
+                            <option value="light">10 years (Young & Fast)</option>
+                            <option value="light">25 years (Prime Speed)</option>
+                            <option value="light">40 years (Peak Performance)</option>
+                            <option value="medium">70 years (Getting Slower)</option>
+                            <option value="heavy">120 years (Too Old - Wise but Slow)</option>
+                        </select>
+                    </div>
+
+                    <div class="attribute-card">
+                        <div class="attribute-icon">🛡️</div>
+                        <label class="attribute-label">Shell Size</label>
+                        <select id="shellSize" required class="attribute-select">
+                            <option value="">Select shell size...</option>
+                            <option value="large">Tiny Shell (Too Small - Fragile)</option>
+                            <option value="small">Small Shell (Lightweight & Fast)</option>
+                            <option value="small">Medium Shell (Perfect Balance)</option>
+                            <option value="small">Large Shell (Optimal Protection)</option>
+                            <option value="medium">Extra Large Shell (Getting Heavy)</option>
+                            <option value="large">Massive Shell (Too Heavy - Slow)</option>
+                        </select>
+                    </div>
+
+                    <div class="attribute-card">
+                        <div class="attribute-icon">🌍</div>
+                        <label class="attribute-label">Racing Ground</label>
+                        <select id="terrain" required class="attribute-select">
+                            <option value="">Choose racing ground...</option>
+                            <option value="rock">Ice Track (Too Slippery - Dangerous)</option>
+                            <option value="sand">Smooth Grass (Perfect Racing Surface)</option>
+                            <option value="sand">Sandy Beach (Ideal for Tortoises)</option>
+                            <option value="sand">Dirt Track (Classic Racing Ground)</option>
+                            <option value="grass">Rocky Path (Getting Bumpy)</option>
+                            <option value="rock">Lava Field (Too Hot - Very Slow)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="photo-upload">
+                    <label class="photo-label">📸 Tortoise Glamour Shot (Optional):</label>
+                    <div class="custom-file-upload">
+                        <input type="file" id="photo" accept="image/*" class="photo-input">
+                        <label for="photo" class="say-cheese-btn">
+                            <span class="cheese-emoji">📸</span>
+                            <span class="cheese-text">Say Cheese & Upload!</span>
+                            <span class="cheese-emoji">🧀</span>
+                        </label>
+                    </div>
+                    <div class="photo-hint">Show off your beautiful shell! 📸✨</div>
+                </div>
+            </div>
+
+            <div class="launch-section">
+                <button type="submit" class="epic-race-btn">
+                    <span class="btn-icon">�</span>
+                    <span class="btn-text">LET'S EMBARRASS THIS RABBIT!</span>
+                    <span class="btn-icon">🏁</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="secret-hint">
+            <div class="hint-icon">🤫</div>
+            <p class="hint-text">
+                <strong>Psst... Insider Info:</strong> Word on the street is there's a LEGENDARY combination that makes even the slowest tortoise zoom past that cocky rabbit!
+                The rabbit's been winning for so long, he's gotten lazy... <em>time to teach him a lesson!</em> 😈
+            </p>
+            <div class="hint-decoration">🤐 🏆 🤐</div>
+        </div>
+    </div>
+
+    <!-- Race Animation Container -->
+    <div id="raceContainer" class="race-container" style="display: none;">
+        <div class="race-track">
+            <div class="finish-line">🏁</div>
+            <div class="race-participants">
+                <div id="rabbit" class="participant rabbit">🐰</div>
+                <div id="tortoise" class="participant tortoise">🐢</div>
+            </div>
+            <div class="race-progress">
+                <div class="progress-bar">
+                    <div id="rabbitProgress" class="progress rabbit-progress"></div>
+                    <div id="tortoiseProgress" class="progress tortoise-progress"></div>
+                </div>
+            </div>
+        </div>
+        <div id="raceStatus" class="race-status">Get ready to race!</div>
+        <div class="race-controls">
+            <button onclick="retryRace()" class="retry-btn" id="retryBtn" style="display: none;">🔄 Try Different Settings</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

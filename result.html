@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Great Race - Epic Results</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="results-body">
+    <div class="results-hero">
+        <div class="results-particles"></div>
+        <div class="results-container">
+            <h1 class="results-title" id="resultTitle">🏁 THE MOMENT OF TRUTH! 🏁</h1>
+
+            <div class="results-content">
+                <div class="winner-showcase" id="winnerAnnouncement">
+                    <!-- Winner will be displayed here -->
+                </div>
+
+                <div class="race-times-grid">
+                    <div class="character-result-card rabbit-result-card">
+                        <div class="result-emoji">🐰</div>
+                        <h3 class="result-name">Mr. Show-Off Rabbit</h3>
+                        <div class="result-time" id="rabbitTime">Time: -- seconds</div>
+                        <div class="result-status" id="rabbitStatus">Still Bragging</div>
+                    </div>
+
+                    <div class="vs-results">
+                        <div class="vs-results-text">VS</div>
+                        <div class="results-lightning">⚡</div>
+                    </div>
+
+                    <div class="character-result-card tortoise-result-card">
+                        <div class="result-emoji">🐢</div>
+                        <h3 class="result-name" id="tortoiseName">Sneaky McTortoise</h3>
+                        <img id="tortoisePhoto" class="tortoise-result-photo" alt="Tortoise Photo" style="display: none;">
+                        <div class="result-time" id="tortoiseTime">Time: -- seconds</div>
+                        <div class="result-status" id="tortoiseStatus">Plot Armor Activated</div>
+                    </div>
+                </div>
+
+                <div class="epic-story" id="raceStory">
+                    <!-- Race story will be displayed here -->
+                </div>
+
+                <div class="legendary-secret" id="secretHint" style="display: none;">
+                    <div class="secret-glow"></div>
+                    <h3 class="secret-title">🎉 HOLY SHELL! YOU FOUND IT! 🎉</h3>
+                    <p class="secret-desc">You discovered the ULTIMATE tortoise power-up combo:</p>
+                    <div class="secret-combo">
+                        <div class="combo-item">
+                            <span class="combo-icon">⚡</span>
+                            <span class="combo-text">Weight: Light</span>
+                        </div>
+                        <div class="combo-item">
+                            <span class="combo-icon">🏃‍♂️</span>
+                            <span class="combo-text">Shell: Small</span>
+                        </div>
+                        <div class="combo-item">
+                            <span class="combo-icon">🏖️</span>
+                            <span class="combo-text">Terrain: Sand</span>
+                        </div>
+                    </div>
+                    <p class="secret-wisdom"><em>"Who needs speed when you have SCIENCE! The rabbit never saw it coming! 🤓"</em></p>
+                </div>
+            </div>
+
+            <div class="epic-actions">
+                <a href="index.html" class="epic-btn primary">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">REMATCH TIME!</span>
+                </a>
+                <button onclick="shareResult()" class="epic-btn secondary">
+                    <span class="btn-icon">📤</span>
+                    <span class="btn-text">BRAG TO FRIENDS</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load stored data
+        const name = localStorage.getItem("tortoiseName");
+        const weight = localStorage.getItem("tortoiseWeight");
+        const shellSize = localStorage.getItem("tortoiseShellSize");
+        const terrain = localStorage.getItem("tortoiseTerrain");
+        const photoData = localStorage.getItem("tortoisePhoto");
+        const isSecretCombo = localStorage.getItem("isWinningCombination") === "true";
+
+        // Get race results from localStorage
+        const raceResultsData = localStorage.getItem("raceResults");
+        let winner, tortoiseTime, rabbitTime, raceStory;
+
+        if (raceResultsData) {
+            const raceResults = JSON.parse(raceResultsData);
+            winner = raceResults.winner;
+            tortoiseTime = raceResults.tortoiseTime;
+            rabbitTime = raceResults.rabbitTime;
+
+            // Generate race story based on results
+            if (winner === 'tortoise') {
+                raceStory = `In an incredible upset, ${name} proved that determination beats speed! The rabbit got overconfident and ${name} seized the moment with a stunning comeback victory!`;
+            } else {
+                raceStory = `The rabbit's speed proved too much for ${name} this time. Despite a valiant effort, the rabbit crossed the finish line first. Better luck next time!`;
+            }
+        } else {
+            // Fallback data
+            winner = "rabbit";
+            tortoiseTime = "12.5";
+            rabbitTime = "9.2";
+            raceStory = "The race was close, but the rabbit's speed won the day.";
+        }
+
+        // Display results
+        document.getElementById("tortoiseName").textContent = `🐢 ${name}`;
+        document.getElementById("tortoiseTime").textContent = `Time: ${tortoiseTime} seconds`;
+        document.getElementById("rabbitTime").textContent = `Time: ${rabbitTime} seconds`;
+        document.getElementById("raceStory").textContent = raceStory;
+
+        // Show winner and apply winner/loser effects
+        const winnerElement = document.getElementById("winnerAnnouncement");
+        const rabbitCard = document.querySelector(".rabbit-result-card");
+        const tortoiseCard = document.querySelector(".tortoise-result-card");
+
+        if (winner === "tortoise") {
+            winnerElement.innerHTML = `<h2 class="winner tortoise-winner">🏆 ${name} WINS! 🏆</h2>`;
+
+            // Tortoise wins - make tortoise powerful, rabbit defeated
+            setTimeout(() => {
+                tortoiseCard.classList.add("winner-card");
+                rabbitCard.classList.add("loser-card");
+
+                // Update status messages
+                document.getElementById("tortoiseStatus").textContent = "VICTORIOUS! 👑";
+                document.getElementById("rabbitStatus").textContent = "Defeated... 😔";
+            }, 500);
+        } else {
+            winnerElement.innerHTML = `<h2 class="winner rabbit-winner">🏆 Rabbit Wins! 🏆</h2>`;
+
+            // Rabbit wins - make rabbit powerful, tortoise defeated
+            setTimeout(() => {
+                rabbitCard.classList.add("winner-card");
+                tortoiseCard.classList.add("loser-card");
+
+                // Update status messages
+                document.getElementById("rabbitStatus").textContent = "VICTORIOUS! 👑";
+                document.getElementById("tortoiseStatus").textContent = "Defeated... 😔";
+            }, 500);
+        }
+
+        // Configuration details removed for cleaner results display
+
+        // Show secret combination hint if found
+        if (isSecretCombo) {
+            document.getElementById("secretHint").style.display = "block";
+        }
+
+        // Show photo if available
+        if (photoData) {
+            const photoElement = document.getElementById("tortoisePhoto");
+            photoElement.src = photoData;
+            photoElement.style.display = "block";
+        }
+
+        function shareResult() {
+            const resultText = `🏁 Race Result: ${winner === "tortoise" ? name + " the Tortoise" : "Rabbit"} won with a time of ${winner === "tortoise" ? tortoiseTime : rabbitTime} seconds! ${isSecretCombo ? "🎯 Secret combination discovered!" : ""}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'The Great Race Results',
+                    text: resultText,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(resultText).then(() => {
+                    alert('Result copied to clipboard!');
+                });
+            }
+        }
+
+        // Victory sound effects
+        function playVictorySound() {
+            if (localStorage.getItem('soundEnabled') === 'false') return;
+
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Play party popper sounds
+                setTimeout(() => playPopperSound(audioContext), 500);
+                setTimeout(() => playPopperSound(audioContext), 800);
+                setTimeout(() => playPopperSound(audioContext), 1200);
+
+                // Play applause sound
+                setTimeout(() => playApplauseSound(audioContext), 1500);
+
+                // Play victory melody
+                setTimeout(() => playVictoryMelody(audioContext), 2000);
+
+            } catch (error) {
+                console.log('Audio not supported');
+            }
+        }
+
+        function playPopperSound(audioContext) {
+            // Create popper "pop" sound
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.1);
+            oscillator.type = 'square';
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+
+        function playApplauseSound(audioContext) {
+            // Create applause-like noise
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
+                    oscillator.frequency.setValueAtTime(Math.random() * 200 + 300, audioContext.currentTime);
+                    oscillator.type = 'sawtooth';
+
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                }, i * 50);
+            }
+        }
+
+        function playVictoryMelody(audioContext) {
+            // Play victory fanfare
+            const notes = [523, 659, 784, 1047, 1319]; // C, E, G, C, E (higher)
+            const noteDuration = 0.4;
+
+            notes.forEach((frequency, index) => {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
+                    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                    oscillator.type = 'sine';
+
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + noteDuration);
+
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + noteDuration);
+                }, index * 200);
+            });
+        }
+
+        // Create party poppers animation
+        function createPartyPoppers() {
+            const colors = ['#FFD700', '#FF6B35', '#4ECDC4', '#FF1744', '#9C27B0'];
+
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.zIndex = '9999';
+                confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
+
+                document.body.appendChild(confetti);
+
+                // Remove confetti after animation
+                setTimeout(() => {
+                    if (confetti.parentNode) {
+                        confetti.parentNode.removeChild(confetti);
+                    }
+                }, 5000);
+            }
+        }
+
+        // Create victory celebration with multiple effects
+        function createVictoryCelebration() {
+            // Create victory banner
+            const banner = document.createElement('div');
+            banner.className = 'victory-banner';
+            banner.innerHTML = '🎉 VICTORY CELEBRATION! 🎉';
+            document.body.appendChild(banner);
+
+            // Remove banner after animation
+            setTimeout(() => {
+                if (banner.parentNode) {
+                    banner.parentNode.removeChild(banner);
+                }
+            }, 4000);
+
+            // Create floating emojis
+            createFloatingEmojis();
+        }
+
+        // Create floating celebration emojis
+        function createFloatingEmojis() {
+            const emojis = ['🎉', '🎊', '🏆', '👑', '⭐', '✨', '🎈', '🎁'];
+
+            for (let i = 0; i < 20; i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'floating-emoji';
+                emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                emoji.style.left = Math.random() * 100 + 'vw';
+                emoji.style.animationDelay = Math.random() * 3 + 's';
+                emoji.style.animationDuration = (Math.random() * 3 + 4) + 's';
+
+                document.body.appendChild(emoji);
+
+                // Remove emoji after animation
+                setTimeout(() => {
+                    if (emoji.parentNode) {
+                        emoji.parentNode.removeChild(emoji);
+                    }
+                }, 7000);
+            }
+        }
+
+        // Create final celebration burst
+        function createFinalCelebrationBurst() {
+            // Create multiple confetti bursts
+            for (let burst = 0; burst < 5; burst++) {
+                setTimeout(() => {
+                    createPartyPoppers();
+                }, burst * 200);
+            }
+
+            // Create victory fireworks
+            createVictoryFireworks();
+        }
+
+        // Create victory fireworks effect
+        function createVictoryFireworks() {
+            const colors = ['#FFD700', '#FF6B35', '#4ECDC4', '#FF1744', '#9C27B0', '#00E676'];
+
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = (20 + i * 30) + '%';
+                    firework.style.top = '20%';
+
+                    // Create firework particles
+                    for (let j = 0; j < 12; j++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'firework-particle';
+                        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                        const angle = (j / 12) * 2 * Math.PI;
+                        const distance = 100 + Math.random() * 50;
+                        const x = Math.cos(angle) * distance;
+                        const y = Math.sin(angle) * distance;
+
+                        particle.style.setProperty('--end-x', x + 'px');
+                        particle.style.setProperty('--end-y', y + 'px');
+
+                        firework.appendChild(particle);
+                    }
+
+                    document.body.appendChild(firework);
+
+                    // Remove firework after animation
+                    setTimeout(() => {
+                        if (firework.parentNode) {
+                            firework.parentNode.removeChild(firework);
+                        }
+                    }, 2000);
+                }, i * 500);
+            }
+        }
+
+        // Add celebration animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes confettiFall {
+                0% {
+                    transform: translateY(-10px) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(100vh) rotate(720deg);
+                    opacity: 0;
+                }
+            }
+
+            .victory-banner {
+                position: fixed;
+                top: 10%;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 3rem;
+                font-weight: 900;
+                color: #FFD700;
+                text-shadow:
+                    0 0 20px rgba(255, 215, 0, 1),
+                    0 0 40px rgba(255, 255, 255, 0.8);
+                z-index: 9999;
+                animation: bannerSlide 4s ease-out forwards;
+                pointer-events: none;
+            }
+
+            @keyframes bannerSlide {
+                0% {
+                    transform: translateX(-50%) translateY(-100px) scale(0.5);
+                    opacity: 0;
+                }
+                20% {
+                    transform: translateX(-50%) translateY(0) scale(1.2);
+                    opacity: 1;
+                }
+                80% {
+                    transform: translateX(-50%) translateY(0) scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateX(-50%) translateY(-50px) scale(0.8);
+                    opacity: 0;
+                }
+            }
+
+            .floating-emoji {
+                position: fixed;
+                font-size: 2rem;
+                z-index: 9998;
+                animation: floatUp linear forwards;
+                pointer-events: none;
+            }
+
+            @keyframes floatUp {
+                0% {
+                    transform: translateY(100vh) rotate(0deg);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 1;
+                }
+                90% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-100px) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+
+            .firework {
+                position: fixed;
+                z-index: 9997;
+                pointer-events: none;
+            }
+
+            .firework-particle {
+                position: absolute;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                animation: fireworkExplode 1.5s ease-out forwards;
+            }
+
+            @keyframes fireworkExplode {
+                0% {
+                    transform: translate(0, 0) scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(var(--end-x), var(--end-y)) scale(0);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Trigger victory celebration for any winner
+        setTimeout(() => {
+            playVictorySound();
+            createPartyPoppers();
+            createVictoryCelebration();
+        }, 1000);
+
+        // Additional celebration after 3 seconds
+        setTimeout(() => {
+            createFinalCelebrationBurst();
+        }, 4000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TotoRace - Live Race</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Race-specific full screen styles */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .race-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Properly sized race track */
+        .race-track {
+            background: linear-gradient(90deg,
+                #2d5a2d 0%,
+                #4a8a4a 20%,
+                #5cb85c 40%,
+                #6dd66d 50%,
+                #5cb85c 60%,
+                #4a8a4a 80%,
+                #2d5a2d 100%);
+            background-size: 100% 100%;
+            border: 4px solid rgba(0, 255, 127, 0.8);
+            border-radius: 25px;
+            padding: 30px 20px;
+            margin: 20px auto;
+            min-height: 250px;
+            overflow: visible;
+            width: 85%;
+            max-width: 400px; /* Smaller track for participants to reach finish */
+            box-shadow:
+                0 20px 40px rgba(0,0,0,0.4),
+                0 0 0 2px rgba(0, 255, 127, 0.6),
+                0 0 40px rgba(0, 255, 127, 0.3),
+                inset 0 0 50px rgba(0, 255, 127, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            display: block;
+            visibility: visible;
+
+            /* Add racing lane lines */
+            background-image:
+                linear-gradient(90deg,
+                    #2d5a2d 0%,
+                    #4a8a4a 20%,
+                    #5cb85c 40%,
+                    #6dd66d 50%,
+                    #5cb85c 60%,
+                    #4a8a4a 80%,
+                    #2d5a2d 100%),
+                repeating-linear-gradient(0deg,
+                    transparent 0px,
+                    transparent 35px,
+                    rgba(255,255,255,0.2) 35px,
+                    rgba(255,255,255,0.2) 37px);
+        }
+
+        /* Enhanced participant visibility with smooth animations */
+        .race-participants {
+            position: relative;
+            height: 180px;
+            margin: 20px 0;
+            z-index: 15;
+            width: 100%;
+            display: block;
+            visibility: visible;
+        }
+
+        .participant {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            transition: transform 0.2s ease-out;
+            z-index: 30;
+            filter: drop-shadow(0 0 15px rgba(0,0,0,0.8)) drop-shadow(0 0 8px rgba(255,255,255,0.6));
+            animation: participantBounce 1.5s ease-in-out infinite alternate;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.9);
+            box-shadow:
+                0 0 20px rgba(255, 255, 255, 0.8),
+                inset 0 0 10px rgba(255, 255, 255, 0.4);
+            will-change: transform;
+            visibility: visible;
+            opacity: 1;
+
+            /* Add running animation when moving */
+            animation: participantBounce 0.6s ease-in-out infinite alternate;
+        }
+
+        .participant.rabbit {
+            top: 30px;
+            left: 20px;
+            border-color: rgba(255, 107, 53, 1);
+            background: rgba(255, 240, 230, 0.98);
+            box-shadow:
+                0 0 20px rgba(255, 107, 53, 0.7),
+                inset 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        .participant.tortoise {
+            top: 120px;
+            left: 20px;
+            border-color: rgba(78, 205, 196, 1);
+            background: rgba(230, 255, 250, 0.98);
+            box-shadow:
+                0 0 20px rgba(78, 205, 196, 0.7),
+                inset 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Tortoise photo styling - same size as emoji */
+        .participant.tortoise img {
+            width: 70px !important;
+            height: 70px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            border: 2px solid rgba(78, 205, 196, 1) !important;
+            box-shadow:
+                0 0 12px rgba(78, 205, 196, 0.6),
+                0 0 6px rgba(255, 255, 255, 0.4) !important;
+            filter: brightness(1.05) contrast(1.1) !important;
+            background: white !important;
+            padding: 1px !important;
+        }
+
+        /* Enhanced progress bars */
+        .race-progress {
+            margin-top: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .progress-bar {
+            position: relative;
+            background: linear-gradient(90deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            height: 40px;
+            overflow: hidden;
+            border: 3px solid rgba(255,255,255,0.3);
+            box-shadow:
+                inset 0 2px 10px rgba(0,0,0,0.4),
+                0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .progress {
+            position: absolute;
+            height: 100%;
+            transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-radius: 18px;
+            box-shadow:
+                0 0 30px rgba(255,255,255,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.5);
+        }
+
+        .rabbit-progress {
+            background: linear-gradient(45deg, #FF6B35, #F7931E, #FFD700);
+            background-size: 200% 200%;
+            animation: progressGlow 2s ease-in-out infinite, gradientShift 3s ease infinite;
+            top: 0;
+            z-index: 12;
+            box-shadow:
+                0 0 40px rgba(255,107,53,0.8),
+                inset 0 2px 0 rgba(255,255,255,0.5);
+        }
+
+        .tortoise-progress {
+            background: linear-gradient(45deg, #4ECDC4, #44A08D, #2ECC71);
+            background-size: 200% 200%;
+            animation: progressGlow 2s ease-in-out infinite, gradientShift 3s ease infinite;
+            top: 0;
+            z-index: 13;
+            box-shadow:
+                0 0 40px rgba(78,205,196,0.8),
+                inset 0 2px 0 rgba(255,255,255,0.5);
+        }
+        
+        .race-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 30px rgba(255,255,255,0.8);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 30px rgba(255,255,255,0.8); }
+            100% { text-shadow: 0 0 50px rgba(255,255,255,1); }
+        }
+
+        @keyframes participantBounce {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(-5px) scale(1.02); }
+        }
+
+        /* Running animation for moving participants */
+        .participant[data-state="running"] {
+            animation: participantRunning 0.4s ease-in-out infinite alternate;
+        }
+
+        .participant[data-state="idle"] {
+            animation: participantBounce 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes participantRunning {
+            0% {
+                transform: translateY(-2px) scale(1.01) rotate(-1deg);
+                filter: drop-shadow(0 0 15px rgba(0,0,0,0.8)) drop-shadow(0 0 8px rgba(255,255,255,0.6));
+            }
+            100% {
+                transform: translateY(-8px) scale(1.03) rotate(1deg);
+                filter: drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 12px rgba(255,255,255,0.8));
+            }
+        }
+
+        @keyframes progressGlow {
+            0%, 100% {
+                filter: brightness(1);
+                box-shadow:
+                    0 0 30px rgba(255,255,255,0.4),
+                    inset 0 2px 0 rgba(255,255,255,0.5);
+            }
+            50% {
+                filter: brightness(1.3);
+                box-shadow:
+                    0 0 50px rgba(255,255,255,0.6),
+                    inset 0 2px 0 rgba(255,255,255,0.7);
+            }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Track movement animation removed - track is now static */
+
+        /* Track labels and markers */
+        .track-label {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255,255,255,0.8);
+            z-index: 25;
+        }
+
+        .start-line {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #ffffff;
+            background: rgba(0, 255, 127, 0.8);
+            padding: 5px 10px;
+            border-radius: 10px;
+            z-index: 25;
+        }
+
+        .finish-line {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            z-index: 25;
+            animation: finishLineWave 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.8));
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 6px 8px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes finishLineWave {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.1); }
+        }
+
+        /* Winner Crown Styling */
+        .winner-crown {
+            position: absolute;
+            font-size: 4rem;
+            z-index: 50;
+            animation: crownAppear 1s ease-out forwards, crownFloat 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+            transform-origin: center bottom;
+        }
+
+        @keyframes crownAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.5) rotate(-10deg);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-20px) scale(1.2) rotate(5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(-30px) scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes crownFloat {
+            0%, 100% {
+                transform: translateY(-30px) rotate(-2deg);
+            }
+            50% {
+                transform: translateY(-35px) rotate(2deg);
+            }
+        }
+
+        /* Sparkle animation around crown */
+        @keyframes sparkleFloat {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(0deg);
+            }
+            25% {
+                opacity: 1;
+                transform: scale(1) rotate(90deg);
+            }
+            75% {
+                opacity: 1;
+                transform: scale(1.2) rotate(270deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.5) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Race Container -->
+    <div class="race-container" id="raceContainer">
+        <h1 class="race-title">🏁 LIVE RACE IN PROGRESS 🏁</h1>
+        
+        <div class="race-track">
+            <div class="track-label">🏁 RACE TRACK 🏁</div>
+            <div class="finish-line">🏁</div>
+            <div class="race-participants">
+                <div class="participant rabbit" id="rabbit">🐰</div>
+                <div class="participant tortoise" id="tortoise">🐢</div>
+            </div>
+            <div class="start-line">START</div>
+        </div>
+
+        <div class="race-progress">
+            <div class="progress-bar">
+                <div class="progress rabbit-progress" id="rabbitProgress"></div>
+                <div class="progress tortoise-progress" id="tortoiseProgress"></div>
+            </div>
+        </div>
+
+        <div id="raceStatus" class="race-status">Get ready to race!</div>
+        
+        <div class="race-controls">
+            <button onclick="retryRace()" class="retry-btn" id="retryBtn" style="display: none;">🔄 Try Different Settings</button>
+        </div>
+    </div>
+
+    <script>
+        // Get stored race data
+        const tortoiseName = localStorage.getItem("tortoiseName") || "Tortoise";
+        const weight = localStorage.getItem("tortoiseWeight") || "medium";
+        const shellSize = localStorage.getItem("tortoiseShellSize") || "medium";
+        const terrain = localStorage.getItem("tortoiseTerrain") || "grass";
+        const isWinningCombination = localStorage.getItem("isWinningCombination") === "true";
+        const tortoisePhoto = localStorage.getItem("tortoisePhoto");
+
+        // Race simulation function
+        function simulateRace(name, weight, shellSize, terrain, isWinning) {
+            let tortoiseTime, rabbitTime;
+            
+            if (isWinning) {
+                tortoiseTime = (Math.random() * 2 + 8).toFixed(2);
+                rabbitTime = (Math.random() * 2 + 10).toFixed(2);
+            } else {
+                tortoiseTime = (Math.random() * 3 + 12).toFixed(2);
+                rabbitTime = (Math.random() * 2 + 8).toFixed(2);
+            }
+            
+            const winner = parseFloat(tortoiseTime) < parseFloat(rabbitTime) ? 'tortoise' : 'rabbit';
+            
+            return {
+                tortoiseName: name,
+                tortoiseTime: tortoiseTime,
+                rabbitTime: rabbitTime,
+                winner: winner,
+                isWinning: isWinning
+            };
+        }
+
+        // Simple and working race animation function
+        function animateRace(raceResults, callback) {
+            console.log('🏁 Starting race animation...');
+
+            const rabbit = document.getElementById('rabbit');
+            const tortoise = document.getElementById('tortoise');
+            const rabbitProgress = document.getElementById('rabbitProgress');
+            const tortoiseProgress = document.getElementById('tortoiseProgress');
+            const raceStatus = document.getElementById('raceStatus');
+
+            if (!rabbit || !tortoise) {
+                console.error('❌ Race participants not found!');
+                return;
+            }
+
+            console.log('✅ Found participants:', rabbit, tortoise);
+
+            // Force initial positioning
+            rabbit.style.cssText = `
+                position: absolute !important;
+                left: 30px !important;
+                top: 30px !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                transform: translateX(0px) !important;
+            `;
+
+            tortoise.style.cssText = `
+                position: absolute !important;
+                left: 30px !important;
+                top: 120px !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                transform: translateX(0px) !important;
+            `;
+
+            // Reset progress bars
+            if (rabbitProgress) rabbitProgress.style.width = '0%';
+            if (tortoiseProgress) tortoiseProgress.style.width = '0%';
+
+            console.log('✅ Initial positions set');
+
+            // Simple animation with direct left positioning
+            const raceDuration = 10000; // 10 seconds
+            let startTime = Date.now();
+            let animationId;
+
+            function updateRace() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / raceDuration, 1);
+
+                console.log(`🏃 Race progress: ${(progress * 100).toFixed(1)}%`);
+
+                // Improved movement - both reach finish line
+                let rabbitPercent, tortoisePercent;
+
+                if (progress < 0.7) {
+                    // First 70% - rabbit leads
+                    rabbitPercent = progress * 75;
+                    tortoisePercent = progress * 50;
+                } else {
+                    // Final 30% - both reach 100% but winner gets there first
+                    const finalProgress = (progress - 0.7) / 0.3;
+                    if (raceResults.winner === 'tortoise') {
+                        // Tortoise wins - reaches 100% first
+                        rabbitPercent = 75 + finalProgress * 20; // Rabbit reaches 95%
+                        tortoisePercent = 50 + finalProgress * 50; // Tortoise reaches 100%
+                    } else {
+                        // Rabbit wins - reaches 100% first
+                        rabbitPercent = 75 + finalProgress * 25; // Rabbit reaches 100%
+                        tortoisePercent = 50 + finalProgress * 40; // Tortoise reaches 90%
+                    }
+                }
+
+                // Convert to pixels - properly sized for track
+                const trackWidth = 250; // Further reduced for 400px track (minus padding)
+                const rabbitX = (rabbitPercent / 100) * trackWidth;
+                const tortoiseX = (tortoisePercent / 100) * trackWidth;
+
+                console.log(`📍 Moving to - Rabbit: ${rabbitX}px, Tortoise: ${tortoiseX}px`);
+
+                // Direct left positioning (most reliable)
+                if (rabbit) {
+                    rabbit.style.left = (30 + rabbitX) + 'px';
+                    console.log('🐰 Rabbit moved to:', rabbit.style.left);
+                }
+
+                if (tortoise) {
+                    tortoise.style.left = (30 + tortoiseX) + 'px';
+                    console.log('🐢 Tortoise moved to:', tortoise.style.left);
+                }
+
+                // Update progress bars
+                if (rabbitProgress) rabbitProgress.style.width = Math.min(rabbitPercent, 100) + '%';
+                if (tortoiseProgress) tortoiseProgress.style.width = Math.min(tortoisePercent, 100) + '%';
+
+                // Update status
+                if (progress < 0.3) {
+                    raceStatus.textContent = "🏁 And they're off! Rabbit takes an early lead!";
+                } else if (progress < 0.7) {
+                    raceStatus.textContent = "🏃‍♂️ Rabbit is ahead, but tortoise keeps steady pace!";
+                } else if (progress < 0.95) {
+                    raceStatus.textContent = raceResults.winner === 'tortoise' ?
+                        "🐢 Tortoise is catching up! What a comeback!" :
+                        "🐰 Rabbit maintains the lead in the final stretch!";
+                }
+
+                if (progress >= 1) {
+                    // Race finished
+                    console.log('🏁 Race finished!');
+                    const winner = raceResults.winner;
+
+                    // Add crown to winner
+                    showWinnerCrown(winner);
+
+                    if (winner === 'tortoise') {
+                        raceStatus.textContent = `🏆 ${raceResults.tortoiseName || 'Tortoise'} wins! Incredible finish!`;
+                        playSound('victory');
+                    } else {
+                        raceStatus.textContent = '🏆 Rabbit wins! Speed prevails!';
+                        playSound('rabbitLaugh');
+                    }
+
+                    // Show retry button
+                    document.getElementById('retryBtn').style.display = 'inline-block';
+
+                    // Go to results after delay
+                    setTimeout(() => {
+                        raceStatus.textContent = 'Preparing results...';
+                        setTimeout(() => {
+                            saveResultsAndNavigate(raceResults);
+                        }, 2000);
+                    }, 3000);
+                } else {
+                    // Continue animation
+                    setTimeout(updateRace, 50); // 20fps for smooth movement
+                }
+            }
+
+            // Start race immediately (countdown already happened in VS screen)
+            raceStatus.textContent = 'Race in progress! 🏁';
+            console.log('🏁 Starting race immediately...');
+
+            // Start the race animation right away
+            setTimeout(() => {
+                console.log('🏁 Calling updateRace...');
+                startTime = Date.now(); // Reset start time
+                updateRace(); // Start the animation
+            }, 1000); // 1 second delay to see setup
+        }
+
+        // Save results and navigate to results page
+        function saveResultsAndNavigate(raceResults) {
+            localStorage.setItem("raceResults", JSON.stringify(raceResults));
+            window.location.href = "result.html";
+        }
+
+        // Sound effects (simplified version)
+        function playSound(type) {
+            if (localStorage.getItem('soundEnabled') === 'false') return;
+            
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                let frequency = 440;
+                
+                switch(type) {
+                    case 'raceStart': frequency = 800; break;
+                    case 'victory': frequency = 523; break;
+                    case 'rabbitLaugh': frequency = 400; break;
+                    case 'tortoiseCry': frequency = 300; break;
+                }
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (error) {
+                console.log('Audio not supported');
+            }
+        }
+
+        // Retry race function
+        function retryRace() {
+            window.location.href = 'index.html';
+        }
+
+        // Show tortoise photo with optimized sizing and performance
+        function displayTortoisePhoto() {
+            if (tortoisePhoto) {
+                const tortoiseElement = document.getElementById('tortoise');
+                tortoiseElement.innerHTML = '';
+
+                const img = document.createElement('img');
+                img.src = tortoisePhoto;
+                img.style.cssText = `
+                    width: 70px !important;
+                    height: 70px !important;
+                    border-radius: 50% !important;
+                    object-fit: cover !important;
+                    border: 2px solid rgba(78, 205, 196, 1) !important;
+                    box-shadow:
+                        0 0 12px rgba(78, 205, 196, 0.6),
+                        0 0 6px rgba(255, 255, 255, 0.4) !important;
+                    filter: brightness(1.05) contrast(1.1) !important;
+                    background: white !important;
+                    padding: 1px !important;
+                    position: relative !important;
+                    z-index: 25 !important;
+                `;
+
+                tortoiseElement.appendChild(img);
+
+                // Optimize for smooth animation
+                tortoiseElement.style.fontSize = '0';
+                tortoiseElement.style.willChange = 'transform';
+            }
+        }
+
+        // Show winner crown animation
+        function showWinnerCrown(winner) {
+            console.log('👑 Showing crown for winner:', winner);
+
+            const winnerElement = winner === 'tortoise' ?
+                document.getElementById('tortoise') :
+                document.getElementById('rabbit');
+
+            if (!winnerElement) {
+                console.error('Winner element not found!');
+                return;
+            }
+
+            // Create crown element
+            const crown = document.createElement('div');
+            crown.className = 'winner-crown';
+            crown.innerHTML = '👑';
+
+            // Position crown above winner
+            const winnerRect = winnerElement.getBoundingClientRect();
+            const raceTrack = document.querySelector('.race-track');
+            const trackRect = raceTrack.getBoundingClientRect();
+
+            // Calculate position relative to race track
+            const leftPosition = winnerRect.left - trackRect.left + (winnerRect.width / 2) - 32; // Center crown
+            const topPosition = winnerRect.top - trackRect.top - 20; // Above winner
+
+            crown.style.left = leftPosition + 'px';
+            crown.style.top = topPosition + 'px';
+
+            // Add crown to race track
+            raceTrack.appendChild(crown);
+
+            console.log('👑 Crown added at position:', leftPosition, topPosition);
+
+            // Add sparkle effect around crown
+            setTimeout(() => {
+                createCrownSparkles(crown);
+            }, 500);
+        }
+
+        // Create sparkle effects around the crown
+        function createCrownSparkles(crownElement) {
+            const sparkleCount = 8;
+            const raceTrack = document.querySelector('.race-track');
+
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.innerHTML = '✨';
+                sparkle.style.cssText = `
+                    position: absolute;
+                    font-size: 1.5rem;
+                    z-index: 45;
+                    animation: sparkleFloat 2s ease-in-out infinite;
+                    animation-delay: ${i * 0.2}s;
+                    pointer-events: none;
+                `;
+
+                // Position sparkles around crown
+                const angle = (i / sparkleCount) * 2 * Math.PI;
+                const radius = 60;
+                const crownRect = crownElement.getBoundingClientRect();
+                const trackRect = raceTrack.getBoundingClientRect();
+
+                const sparkleX = (crownRect.left - trackRect.left) + Math.cos(angle) * radius;
+                const sparkleY = (crownRect.top - trackRect.top) + Math.sin(angle) * radius;
+
+                sparkle.style.left = sparkleX + 'px';
+                sparkle.style.top = sparkleY + 'px';
+
+                raceTrack.appendChild(sparkle);
+
+                // Remove sparkle after animation
+                setTimeout(() => {
+                    if (sparkle.parentNode) {
+                        sparkle.parentNode.removeChild(sparkle);
+                    }
+                }, 4000);
+            }
+        }
+
+        // Initialize race elements and start
+        function initializeRace() {
+            console.log('Initializing race...');
+
+            // Ensure all elements are visible
+            const rabbit = document.getElementById('rabbit');
+            const tortoise = document.getElementById('tortoise');
+            const raceTrack = document.querySelector('.race-track');
+            const raceParticipants = document.querySelector('.race-participants');
+
+            console.log('Found elements:', { rabbit: !!rabbit, tortoise: !!tortoise, raceTrack: !!raceTrack });
+
+            if (rabbit) {
+                rabbit.style.visibility = 'visible';
+                rabbit.style.opacity = '1';
+                rabbit.style.display = 'flex';
+                rabbit.style.position = 'absolute';
+                rabbit.style.left = '30px';
+                rabbit.style.top = '30px';
+                console.log('Rabbit initialized');
+            }
+
+            if (tortoise) {
+                tortoise.style.visibility = 'visible';
+                tortoise.style.opacity = '1';
+                tortoise.style.display = 'flex';
+                tortoise.style.position = 'absolute';
+                tortoise.style.left = '30px';
+                tortoise.style.top = '120px';
+                console.log('Tortoise initialized');
+            }
+
+            if (raceTrack) {
+                raceTrack.style.visibility = 'visible';
+                raceTrack.style.display = 'block';
+            }
+
+            if (raceParticipants) {
+                raceParticipants.style.visibility = 'visible';
+                raceParticipants.style.display = 'block';
+            }
+
+            // Display tortoise photo if available
+            displayTortoisePhoto();
+
+            // Start the race
+            const raceResults = simulateRace(tortoiseName, weight, shellSize, terrain, isWinningCombination);
+            console.log('Starting race with results:', raceResults);
+
+            // Force a small delay to ensure DOM is ready
+            setTimeout(() => {
+                animateRace(raceResults, () => {
+                    saveResultsAndNavigate(raceResults);
+                });
+            }, 500);
+        }
+
+        // Start the race when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Small delay to ensure all elements are rendered
+            setTimeout(initializeRace, 100);
+        });
+    </script>
+</body>
+</html>
