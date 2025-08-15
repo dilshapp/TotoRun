@@ -54,9 +54,17 @@ Project Documentation
 
 # Screenshots
 -Starting Page
+![image](https://github.com/dilshapp/TotoRun/blob/main/IMG-20250815-WA0005.jpg) 
+
+-Input Page
 ![image]( )
+
+
 - Racing page
   ![image](https://github.com/dilshapp/TotoRun/blob/main/IMG-20250815-WA0004.jpg)
+
+
+  
   
 
 # Diagrams
